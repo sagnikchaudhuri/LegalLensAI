@@ -1,0 +1,27 @@
+SERVICE AGREEMENT
+
+This Service Agreement is entered into by Northstar Studio ("Client") and Jordan Lee
+("Contractor"). Contractor will provide website design and development services.
+
+Scope of Work and Deliverables. Contractor will deliver a responsive five-page website,
+design files, and deployment documentation by September 30. Client will provide feedback
+within five business days of each milestone.
+
+Payment. Client will pay a total fee of $8,000. Fifty percent is due at signing and the
+remaining balance is due within 15 days after final delivery.
+
+Confidentiality. Each party will protect confidential information received from the
+other party and will use it only to perform this agreement.
+
+Intellectual Property. After full payment, Client owns the final deliverables. Contractor
+retains ownership of pre-existing tools, templates, and know-how.
+
+Termination. Either party may terminate this agreement with 14 days written notice.
+Client will pay for work completed through the termination date.
+
+Limitation of Liability. Each party's total liability is limited to the fees paid under
+this agreement.
+
+Dispute Resolution and Governing Law. The parties will first attempt good-faith
+mediation. This agreement is governed by the laws of the State of California.
+

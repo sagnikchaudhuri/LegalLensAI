@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="LegalLens AI maskable icon">
+  <rect width="512" height="512" fill="#090d11"/>
+  <circle cx="248" cy="230" r="118" fill="#0c1116" stroke="#d7a336" stroke-width="22"/>
+  <path d="M332 314l82 82" stroke="#d7a336" stroke-width="32" stroke-linecap="round"/>
+  <path d="M174 200h148M248 146v164M190 200l-38 76h76l-38-76ZM306 200l-38 76h76l-38-76ZM210 332h76" fill="none" stroke="#f0ebdf" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="190" cy="200" r="9" fill="#f0ebdf"/>
+  <circle cx="306" cy="200" r="9" fill="#f0ebdf"/>
+</svg>
+

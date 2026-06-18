@@ -1,0 +1,52 @@
+SYNTHETIC DEMO DOCUMENT - EMPLOYMENT OFFER LETTER
+
+This Employment Offer Letter is issued by Meridian Robotics Private Limited, a
+fictional robotics startup in Hyderabad, India ("Company"), to Arjun Rao, a
+fictional candidate residing in Chennai, India ("Employee"). The Company offers
+Employee the position of Product Operations Associate.
+
+1. Role and Start Date
+Employee will join as Product Operations Associate on August 1, 2026. Employee's
+responsibilities include vendor coordination, product data review, operations
+reporting, customer issue tracking, and other duties assigned by the Company.
+
+2. Compensation
+Employee will receive a fixed annual salary of INR 8,40,000, payable monthly
+subject to tax deductions. Employee may be eligible for a discretionary annual
+bonus based on Company performance, manager review, and leadership approval.
+
+3. Working Hours and Location
+Employee will work from the Hyderabad office or remotely as approved by the
+Company. Normal working hours are 10:00 AM to 7:00 PM, Monday through Friday,
+with flexibility required during product launches or urgent customer escalations.
+
+4. Confidentiality
+Employee must keep Company source materials, customer information, vendor
+pricing, product plans, internal dashboards, and financial data confidential
+during and after employment.
+
+5. Intellectual Property
+All work product, documents, inventions, workflows, designs, reports, product
+ideas, and process improvements created by Employee during employment and related
+to Company business will belong to the Company.
+
+6. Probation and Termination
+Employee will be on probation for six months. During probation, either party may
+terminate employment with seven days notice. After probation, either party may
+terminate employment with thirty days notice or salary in lieu of notice.
+
+7. Policies
+Employee must comply with Company policies, including information security,
+expense, leave, workplace conduct, and acceptable use policies, as updated from
+time to time.
+
+8. Jurisdiction
+This offer and employment relationship are governed by the laws of India. Courts
+in Hyderabad, Telangana will have jurisdiction.
+
+9. Risky or Ambiguous Terms for Demo Review
+"Other duties assigned by the Company" is broad and could expand the role without
+limits. The discretionary bonus has no measurable criteria. The IP clause may be
+too broad because it does not exclude Employee's prior personal projects. The
+offer references policies that may change but does not attach or summarize them.
+

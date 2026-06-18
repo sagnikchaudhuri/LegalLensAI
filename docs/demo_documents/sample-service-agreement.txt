@@ -1,0 +1,65 @@
+SYNTHETIC DEMO DOCUMENT - SERVICE AGREEMENT
+
+This Service Agreement is entered into by BluePeak Retail Solutions Private
+Limited, a fictional retail technology company in Delhi, India ("Client"), and
+HelioWorks Consulting, a fictional software consulting firm in Kochi, India
+("Service Provider"). Service Provider will configure analytics dashboards and
+workflow automations for Client's internal operations team.
+
+1. Scope of Services
+Service Provider will deliver three analytics dashboards, two workflow automation
+scripts, basic administrator training, and deployment documentation. Services do
+not include custom mobile application development, paid third-party software
+licenses, or ongoing infrastructure management unless agreed separately.
+
+2. Client Responsibilities
+Client will provide access to sample data, business requirements, system
+credentials, and a project contact person. Client will review deliverables within
+five business days of submission.
+
+3. Fees and Payment
+Client will pay INR 4,80,000 plus applicable taxes. Forty percent is due at
+signing, thirty percent after dashboard delivery, and thirty percent after final
+deployment. Expenses above INR 10,000 require prior written approval.
+
+4. Change Requests
+Any material change to scope, timeline, integrations, or deliverables must be
+agreed in writing. If the parties cannot agree on pricing for a change request,
+Service Provider may proceed using reasonable commercial judgment.
+
+5. Confidentiality and Data Handling
+Each party will protect confidential business and technical information. Service
+Provider will use Client data only to perform the services and will not sell or
+disclose Client data to third parties except subcontractors involved in delivery.
+
+6. Intellectual Property
+Client owns final dashboards and documentation after full payment. Service
+Provider retains ownership of reusable scripts, libraries, templates, know-how,
+and generic automation methods.
+
+7. Warranty
+Service Provider warrants that services will be performed in a professional and
+workmanlike manner for thirty days after final delivery. Client's exclusive
+remedy is correction of non-conforming services.
+
+8. Termination
+Either party may terminate for material breach if the breach is not cured within
+fifteen days after written notice. Client may terminate for convenience with ten
+days notice and must pay for completed work and committed expenses.
+
+9. Limitation of Liability
+Neither party will be liable for indirect, incidental, special, or consequential
+damages. Total liability is capped at fees paid in the three months before the
+claim.
+
+10. Jurisdiction
+This Agreement is governed by the laws of India. Courts in New Delhi will have
+exclusive jurisdiction.
+
+11. Risky or Ambiguous Terms for Demo Review
+The subcontractor data-sharing language does not require Client approval or
+minimum security controls. The change request clause lets Service Provider
+proceed using "reasonable commercial judgment" without agreed pricing. The
+liability cap may be too low for data handling or confidentiality breaches. The
+Agreement does not include a clear data deletion timeline after project closure.
+

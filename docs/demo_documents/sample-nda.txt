@@ -1,0 +1,64 @@
+SYNTHETIC DEMO DOCUMENT - MUTUAL NON-DISCLOSURE AGREEMENT
+
+This Mutual Non-Disclosure Agreement is entered into by Aurora Analytics Private
+Limited, a fictional company incorporated in Bengaluru, India ("Aurora"), and
+Northbridge Design Labs, a fictional product design studio based in Pune, India
+("Northbridge"). The parties wish to discuss a possible collaboration involving
+workflow automation prototypes, customer research, technical designs, product
+roadmaps, pricing models, and business plans.
+
+1. Confidential Information
+Confidential Information means non-public technical, commercial, financial,
+customer, product, design, or strategic information disclosed by either party in
+writing, orally, visually, or through access to systems. Confidential Information
+includes prototypes, architecture diagrams, source snippets, pitch materials,
+market assumptions, and notes prepared from disclosed information.
+
+2. Purpose
+The receiving party may use Confidential Information only to evaluate and discuss
+the proposed collaboration between Aurora and Northbridge. The receiving party
+may share Confidential Information only with employees and advisors who need to
+know it for the Purpose and who are bound by confidentiality duties.
+
+3. Obligations
+The receiving party will protect Confidential Information using at least the same
+care it uses for its own confidential information, and no less than reasonable
+care. The receiving party will not copy, reverse engineer, publish, sell, license,
+or disclose Confidential Information except as allowed by this Agreement.
+
+4. Exclusions
+Confidential Information does not include information that is publicly available
+without breach, already known by the receiving party before disclosure, received
+lawfully from a third party, or independently developed without use of the
+disclosing party's Confidential Information.
+
+5. Term and Termination
+This Agreement begins on the last signature date and continues for one year.
+Either party may terminate discussions at any time by written notice. The
+confidentiality obligations survive for two years after termination.
+
+6. Return or Deletion
+Upon written request, the receiving party will return or delete Confidential
+Information within thirty days, except one archival copy may be retained for
+legal compliance.
+
+7. Intellectual Property
+All Confidential Information remains the property of the disclosing party. No
+license or transfer of intellectual property is granted except the limited right
+to use Confidential Information for the Purpose.
+
+8. Remedies
+Unauthorized disclosure may cause irreparable harm. The disclosing party may seek
+injunctive relief in addition to other available remedies.
+
+9. Jurisdiction
+This Agreement is governed by the laws of India. Courts located in Bengaluru,
+Karnataka will have exclusive jurisdiction.
+
+10. Risky or Ambiguous Terms for Demo Review
+The Agreement does not define security controls for cloud storage or AI tools.
+The Agreement does not clearly state whether confidentiality survives for trade
+secrets beyond two years. The Agreement does not include a detailed breach notice
+timeline. The Agreement allows advisors to access Confidential Information but
+does not require written approval before sharing with them.
+
