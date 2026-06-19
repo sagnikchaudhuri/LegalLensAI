@@ -229,6 +229,40 @@ Open:
 http://127.0.0.1:5173/
 ```
 
+## Deployment
+
+Recommended production architecture:
+
+- Frontend: Vercel static Vite deployment.
+- Backend: external Python host with persistent disk or object/vector storage, such as Render, Fly.io, Railway, AWS, GCP, or a container VM.
+
+Why the backend is not configured for Vercel:
+
+- `sentence-transformers` pulls PyTorch/transformer model dependencies that are large and slow to cold-start.
+- EasyOCR depends on heavy OCR/runtime packages.
+- ChromaDB is currently configured with local persistence under `backend/data/chroma`.
+- Uploads, reports, audit logs, and vector entries currently assume writable persistent local storage.
+- Legal document analysis can exceed normal serverless cold-start, size, and persistence expectations.
+
+Vercel project settings for this repository:
+
+| Setting | Value |
+| --- | --- |
+| Framework Preset | Other / Vite static build |
+| Root Directory | repository root |
+| Install Command | `cd frontend && npm ci` |
+| Build Command | `cd frontend && npm run build` |
+| Output Directory | `frontend/dist` |
+
+Required Vercel environment variable:
+
+```dotenv
+VITE_API_URL=https://your-backend.example.com
+```
+
+The value must point to the externally deployed FastAPI backend. The backend must
+set `FRONTEND_URL` to the Vercel site origin so CORS allows browser requests.
+
 ## API Routes
 
 | Method | Route | Purpose |

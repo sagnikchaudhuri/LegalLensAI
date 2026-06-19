@@ -1,0 +1,42 @@
+# Local dependencies and build outputs
+frontend/node_modules/
+frontend/dist/
+node_modules/
+dist/
+
+# Backend is deployed separately from Vercel frontend hosting
+backend/.venv/
+backend/.pytest_cache/
+backend/**/__pycache__/
+backend/**/*.pyc
+
+# Sensitive/local backend runtime artifacts
+backend/uploads/
+backend/data/
+backend/**/*.log
+backend/**/audit.log
+
+# Vector stores, databases, caches, model downloads
+**/chroma/
+**/*.sqlite
+**/*.sqlite3
+**/*.db
+**/.cache/
+**/.pytest_cache/
+**/hf_cache/
+**/.huggingface/
+**/.torch/
+**/torch_cache/
+**/sentence_transformers/
+**/models/
+
+# Local environment files
+.env
+backend/.env
+frontend/.env
+.vercel/
+
+# Non-deployment project materials
+docs/
+assets/
+
