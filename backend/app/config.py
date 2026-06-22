@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     rate_limit_window_seconds: int = 60
     max_request_size_bytes: int = 20 * 1024 * 1024
     audit_hash_salt: str = "legal-lens-ai-local-salt"
+    firebase_project_id: str | None = None
+    firebase_service_account_json: str | None = None
+    auth_required: bool = False
+    embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2"
+    embedding_device: str = "cpu"
+    embedding_warmup_on_start: bool = True
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",

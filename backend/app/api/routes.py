@@ -25,6 +25,7 @@ from app.security.access_control import (
     safe_document_paths,
 )
 from app.security.audit_logger import audit_log
+from app.security.firebase_auth import enforce_document_owner, firebase_user_id, require_user_auth
 from app.security.prompt_guard import detect_prompt_injection
 from app.services.cleanup_service import cleanup_expired_documents
 from app.services.document_service import extract_document
@@ -41,7 +42,11 @@ def _client_ip(request: Request) -> str | None:
 
 
 @router.post("/upload", response_model=UploadResponse)
-async def upload_document(request: Request, file: UploadFile = File(...)):
+async def upload_document(
+    request: Request,
+    file: UploadFile = File(...),
+    user: dict = Depends(require_user_auth),
+):
     cleanup_expired_documents()
     document_id = generate_document_id()
     access_token = generate_access_token()
@@ -76,6 +81,7 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
         "pages": extracted["pages"],
         "ocr_used": extracted["ocr_used"],
         "access_token_hash": hash_access_token(access_token),
+        "owner_uid": firebase_user_id(user) if settings.auth_required else None,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "prompt_injection_flags": injection_findings,
     }
@@ -110,7 +116,9 @@ async def upload_document(request: Request, file: UploadFile = File(...)):
 def analyze_document(
     request: Request,
     metadata: dict = Depends(require_document_access),
+    user: dict = Depends(require_user_auth),
 ):
+    enforce_document_owner(metadata, user)
     document_id = metadata["document_id"]
     report = build_analysis(document_id, metadata["file_name"], metadata["text"])
     save_json(settings.data_dir / f"{document_id}.report.json", report)
@@ -123,7 +131,9 @@ def chat_with_document(
     request: Request,
     payload: ChatRequest,
     metadata: dict = Depends(require_document_access),
+    user: dict = Depends(require_user_auth),
 ):
+    enforce_document_owner(metadata, user)
     document_id = metadata["document_id"]
     contexts = retrieve(document_id, payload.question, settings.data_dir)
     qa = LegalQAAgent().run(payload.question, contexts)
@@ -139,7 +149,9 @@ def chat_with_document(
 def get_report(
     request: Request,
     metadata: dict = Depends(require_document_access),
+    user: dict = Depends(require_user_auth),
 ):
+    enforce_document_owner(metadata, user)
     document_id = metadata["document_id"]
     report_path = settings.data_dir / f"{document_id}.report.json"
     audit_log("report", "success", "Document report requested.", document_id=document_id, client_ip=_client_ip(request))
@@ -150,7 +162,9 @@ def get_report(
 def delete_document(
     request: Request,
     metadata: dict = Depends(require_document_access),
+    user: dict = Depends(require_user_auth),
 ):
+    enforce_document_owner(metadata, user)
     document_id = metadata["document_id"]
     for path in safe_document_paths(document_id, metadata):
         path.unlink(missing_ok=True)
@@ -160,13 +174,17 @@ def delete_document(
 
 
 @router.get("/draft/types")
-def get_draft_types(request: Request):
+def get_draft_types(request: Request, user: dict = Depends(require_user_auth)):
     audit_log("draft", "success", "Draft types requested.", client_ip=_client_ip(request))
     return {"document_types": DOCUMENT_TYPES}
 
 
 @router.post("/draft", response_model=DraftResponse)
-def generate_draft(request: Request, payload: DraftRequest):
+def generate_draft(
+    request: Request,
+    payload: DraftRequest,
+    user: dict = Depends(require_user_auth),
+):
     response = DraftingAgent().run(payload).draft
     audit_log("draft", "success", "Draft generated.", client_ip=_client_ip(request))
     return response

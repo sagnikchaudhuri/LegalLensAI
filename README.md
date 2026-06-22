@@ -40,7 +40,8 @@ LegalLens AI solves the demo version of that problem by combining:
 - Analyze contracts for summaries, key clauses, red flags, missing protections, and risk scores.
 - Ask questions against the uploaded contract with citations.
 - Generate legal drafts for NDAs, service agreements, freelance contracts, employment agreements, internship agreements, legal notices, privacy policies, and terms and conditions.
-- Protect document routes with bearer access tokens stored only in frontend session storage.
+- Gate the app UI behind Firebase Google sign-in.
+- Protect document routes with document access tokens stored only in frontend session storage.
 - Delete uploaded files, extracted text, reports, chunks, metadata, and vector entries.
 - Install as a responsive PWA on Android Chrome and modern mobile browsers.
 
@@ -68,7 +69,7 @@ Add screenshots here before publishing the repository:
 | OCR | EasyOCR |
 | Parsing | PyMuPDF, python-docx, plain text readers |
 | Storage | Local uploads, JSON metadata/reports, local Chroma persistence |
-| Security | Bearer document tokens, hashed token storage, rate limiting, safe audit logs |
+| Security | Firebase Google auth, document access tokens, hashed token storage, rate limiting, safe audit logs |
 | Mobile / PWA | Web App Manifest, service worker for safe static assets, responsive CSS, iOS safe-area support |
 
 ## Architecture
@@ -112,11 +113,17 @@ token flow, and drafting pipeline.
 - Sanitized filenames and secure random document IDs.
 - No raw local file paths returned to the frontend.
 - Access token generated at upload and stored as a hash in metadata.
-- Protected routes require:
+- The frontend requires Firebase Google sign-in before users can enter the app.
+- Protected document API routes can require both:
 
 ```http
-Authorization: Bearer <access_token>
+Authorization: Bearer <firebase-id-token>
+X-Document-Token: <document-access-token>
 ```
+
+The Firebase token proves the user is logged in. The document token proves
+access to a specific uploaded document. Local backend development can keep
+`AUTH_REQUIRED=false`; deployed environments should set `AUTH_REQUIRED=true`.
 
 - Protected routes:
   - `POST /api/analyze/{document_id}`
@@ -168,6 +175,8 @@ Synthetic demo documents live in [docs/demo_documents](docs/demo_documents):
 
 These are fictional and safe for demos. They intentionally include ambiguous or
 risky clauses so the analysis flow has something meaningful to detect.
+Use [docs/demo_script.md](docs/demo_script.md) for a 3-minute walkthrough and
+[docs/demo_checklist.md](docs/demo_checklist.md) for the pre-demo QA checklist.
 
 ## Local Setup
 
@@ -199,6 +208,12 @@ Important backend environment variables:
 GEMINI_API_KEY=
 GEMINI_MODEL=gemini-2.0-flash
 FRONTEND_URL=http://localhost:5173
+AUTH_REQUIRED=false
+FIREBASE_PROJECT_ID=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+EMBEDDING_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2
+EMBEDDING_DEVICE=cpu
+EMBEDDING_WARMUP_ON_START=true
 MAX_UPLOAD_SIZE_BYTES=15728640
 DOCUMENT_AUTO_EXPIRE_HOURS=24
 REDACT_PII_FOR_LLM=true
@@ -221,6 +236,10 @@ Frontend environment:
 
 ```dotenv
 VITE_API_URL=http://localhost:8000
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_APP_ID=
 ```
 
 Open:
@@ -234,7 +253,7 @@ http://127.0.0.1:5173/
 Recommended production architecture:
 
 - Frontend: Vercel static Vite deployment.
-- Backend: external Python host with persistent disk or object/vector storage, such as Render, Fly.io, Railway, AWS, GCP, or a container VM.
+- Backend: Render Web Service with persistent disk for uploads, reports, audit logs, and Chroma vectors.
 
 Why the backend is not configured for Vercel:
 
@@ -254,14 +273,33 @@ Vercel project settings for this repository:
 | Build Command | `cd frontend && npm run build` |
 | Output Directory | `frontend/dist` |
 
+Preferred Vercel project settings if creating the frontend project from the `frontend` folder:
+
+| Setting | Value |
+| --- | --- |
+| Root Directory | `frontend` |
+| Install Command | `npm ci` |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+
 Required Vercel environment variable:
 
 ```dotenv
 VITE_API_URL=https://your-backend.example.com
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_APP_ID=...
 ```
 
 The value must point to the externally deployed FastAPI backend. The backend must
 set `FRONTEND_URL` to the Vercel site origin so CORS allows browser requests.
+
+Detailed deployment checklists:
+
+- Frontend: `frontend/README_DEPLOYMENT.md`
+- Backend: `backend/README_DEPLOYMENT.md`
+- Auth: `docs/auth_test_checklist.md`
 
 ## API Routes
 

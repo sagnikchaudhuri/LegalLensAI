@@ -12,11 +12,12 @@ export default function LensHero() {
       whileHover={{ scale: 1.035 }}
       whileTap={{ scale: 0.98 }}
     >
-      <span className="lens-corners" />
-      <span className="lens-orbit" />
-      <span className="lens-core"><Scale size={72} strokeWidth={0.8} /></span>
-      <span className="lens-label">Click to analyze</span>
+      <span className="lens-visual">
+        <span className="lens-corners" />
+        <span className="lens-orbit" />
+        <span className="lens-core"><Scale size={72} strokeWidth={0.8} /></span>
+        <span className="lens-label">Click to analyze</span>
+      </span>
     </motion.button>
   );
 }
-

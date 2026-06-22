@@ -29,14 +29,18 @@ def hash_access_token(token: str) -> str:
 def require_document_access(
     document_id: str,
     authorization: str | None = Header(default=None),
+    x_document_token: str | None = Header(default=None),
 ) -> dict:
     if not DOCUMENT_ID_PATTERN.fullmatch(document_id):
         raise HTTPException(status_code=404, detail="Document not found.")
-    if not authorization or not authorization.lower().startswith("bearer "):
-        raise HTTPException(status_code=401, detail="Document access token is required.")
-    token = authorization.split(" ", 1)[1].strip()
+
+    token = (x_document_token or "").strip()
+    if not token and not settings.auth_required and authorization and authorization.lower().startswith("bearer "):
+        token = authorization.split(" ", 1)[1].strip()
+
     if not token:
         raise HTTPException(status_code=401, detail="Document access token is required.")
+
     metadata_path = settings.data_dir / f"{document_id}.json"
     metadata = load_json(metadata_path)
     expected_hash = metadata.get("access_token_hash")

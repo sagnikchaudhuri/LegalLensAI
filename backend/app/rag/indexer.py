@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from app.config import settings
 from app.rag.chroma_client import persistent_client
 from app.services.document_service import split_into_chunks, split_pages_into_chunks
 from app.services.embedding_service import get_embedding_service
@@ -63,7 +64,7 @@ def _upsert_chunks(data_dir: Path, chunks: list[dict], document_id: str) -> None
     client = persistent_client(data_dir / "chroma")
     collection = client.get_or_create_collection(
         name=COLLECTION_NAME,
-        metadata={"embedding_model": "sentence-transformers/all-MiniLM-L6-v2"},
+        metadata={"embedding_model": settings.embedding_model_name},
     )
     collection.upsert(
         ids=[chunk["chunk_id"] for chunk in chunks],

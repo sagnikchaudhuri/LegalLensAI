@@ -1,3 +1,5 @@
+import { getFirebaseIdToken } from "../auth/firebase";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const tokenKey = (documentId) => `documentToken:${documentId}`;
@@ -24,8 +26,15 @@ function safeErrorMessage(payload) {
   return "Something went wrong. Please try again.";
 }
 
+async function userAuthHeaders(headers = {}) {
+  const token = await getFirebaseIdToken();
+  if (!token) return headers;
+  return { ...headers, Authorization: `Bearer ${token}` };
+}
+
 async function request(path, options = {}) {
-  const response = await fetch(`${API_URL}${path}`, options);
+  const headers = await userAuthHeaders(options.headers || {});
+  const response = await fetch(`${API_URL}${path}`, { ...options, headers });
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
     throw new Error(safeErrorMessage(payload));
@@ -33,12 +42,12 @@ async function request(path, options = {}) {
   return response.json();
 }
 
-function authHeaders(documentId, headers = {}) {
+function documentHeaders(documentId, headers = {}) {
   const token = readSession(tokenKey(documentId));
   if (!token) {
     throw new Error("Document access expired. Please upload the document again.");
   }
-  return { ...headers, Authorization: `Bearer ${token}` };
+  return { ...headers, "X-Document-Token": token };
 }
 
 export function getAnalysisCacheKey(documentId) {
@@ -66,20 +75,20 @@ export function uploadDocument(file) {
 export function analyzeDocument(documentId) {
   return request(`/api/analyze/${documentId}`, {
     method: "POST",
-    headers: authHeaders(documentId),
+    headers: documentHeaders(documentId),
   });
 }
 
 export function getReport(documentId) {
   return request(`/api/report/${documentId}`, {
-    headers: authHeaders(documentId),
+    headers: documentHeaders(documentId),
   });
 }
 
 export function askQuestion(documentId, question) {
   return request(`/api/chat/${documentId}`, {
     method: "POST",
-    headers: authHeaders(documentId, { "Content-Type": "application/json" }),
+    headers: documentHeaders(documentId, { "Content-Type": "application/json" }),
     body: JSON.stringify({ question }),
   });
 }
@@ -87,7 +96,7 @@ export function askQuestion(documentId, question) {
 export function deleteDocument(documentId) {
   return request(`/api/documents/${documentId}`, {
     method: "DELETE",
-    headers: authHeaders(documentId),
+    headers: documentHeaders(documentId),
   }).then((result) => {
     clearDocumentSession(documentId);
     return result;

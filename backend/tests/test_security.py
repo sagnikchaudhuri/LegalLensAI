@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from app.api import routes
 from app.config import settings
 from app.main import app
+from app.security import firebase_auth
 from app.security.pii_redactor import redact_pii
 from app.security.prompt_guard import detect_prompt_injection
 from app.utils.file_utils import save_json
@@ -31,6 +32,8 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(settings, "max_upload_size_bytes", 15 * 1024 * 1024)
     monkeypatch.setattr(settings, "max_request_size_bytes", 20 * 1024 * 1024)
     monkeypatch.setattr(settings, "gemini_api_key", None)
+    monkeypatch.setattr(settings, "auth_required", False)
+    monkeypatch.setattr(settings, "embedding_warmup_on_start", False)
 
     def fake_create_index(document_id, text, data_dir, pages=None, source_filename="uploaded-document"):
         chunks = [
@@ -62,7 +65,7 @@ def upload_text(client):
 
 
 def auth_header(token):
-    return {"Authorization": f"Bearer {token}"}
+    return {"X-Document-Token": token}
 
 
 def test_invalid_executable_content_is_rejected(client):
@@ -187,3 +190,36 @@ def test_prompt_injection_detector_flags_untrusted_instructions():
     )
 
     assert len(findings) >= 3
+
+
+def test_auth_required_rejects_missing_user_token(client, monkeypatch):
+    monkeypatch.setattr(settings, "auth_required", True)
+
+    response = client.post(
+        "/api/upload",
+        files={"file": ("agreement.txt", VALID_CONTRACT_TEXT.encode("utf-8"), "text/plain")},
+    )
+
+    assert response.status_code == 401
+    assert response.json()["error"]["message"] == "User login is required."
+
+
+def test_auth_required_accepts_user_and_document_tokens(client, monkeypatch):
+    monkeypatch.setattr(settings, "auth_required", True)
+    monkeypatch.setattr(firebase_auth, "_verify_id_token", lambda token: {"uid": "demo-user"})
+    user_headers = {"Authorization": "Bearer firebase-test-token"}
+
+    upload = client.post(
+        "/api/upload",
+        files={"file": ("agreement.txt", VALID_CONTRACT_TEXT.encode("utf-8"), "text/plain")},
+        headers=user_headers,
+    )
+    assert upload.status_code == 200, upload.text
+    uploaded = upload.json()
+
+    analysis = client.post(
+        f"/api/analyze/{uploaded['document_id']}",
+        headers={**user_headers, "X-Document-Token": uploaded["access_token"]},
+    )
+
+    assert analysis.status_code == 200, analysis.text

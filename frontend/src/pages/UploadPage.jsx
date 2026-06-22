@@ -7,6 +7,7 @@ import { uploadDocument } from "../services/api";
 
 const MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024;
 const ACCEPTED_EXTENSIONS = new Set(["pdf", "docx", "txt", "png", "jpg", "jpeg"]);
+const CAMERA_ACCEPT = "image/*";
 const DOCUMENT_ACCEPT = [
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -49,6 +50,7 @@ export default function UploadPage() {
 
   const handleFile = async (file) => {
     if (!file || uploading) return;
+    setError("");
     setFileName(file.name);
     setFileSize(readableSize(file.size));
     const validationError = validateFile(file);
@@ -64,6 +66,18 @@ export default function UploadPage() {
     } catch (err) {
       setError(err.message);
       setUploading(false);
+    }
+  };
+
+  const openFilePicker = () => {
+    if (!uploading) {
+      fileRef.current?.click();
+    }
+  };
+
+  const openCameraPicker = () => {
+    if (!uploading) {
+      cameraRef.current?.click();
     }
   };
 
@@ -91,16 +105,31 @@ export default function UploadPage() {
             Your document is processed securely for analysis and can be deleted anytime. AI-generated legal review is informational and not legal advice.
           </p>
           <div className="capture-actions">
-            <button className="capture-action primary" onClick={() => fileRef.current?.click()} disabled={uploading} aria-describedby="upload-help">
+            <button
+              className="capture-action primary"
+              type="button"
+              onClick={openFilePicker}
+              disabled={uploading}
+              aria-describedby="upload-help"
+              aria-label="Upload contract file"
+            >
               <span><Upload size={20} strokeWidth={1.5} /></span>Upload File
             </button>
-            <button className="capture-action" onClick={() => cameraRef.current?.click()} disabled={uploading} aria-describedby="upload-help">
+            <button
+              className="capture-action"
+              type="button"
+              onClick={openCameraPicker}
+              disabled={uploading}
+              aria-describedby="camera-help"
+              aria-label="Take a photo of a contract"
+            >
               <span><Camera size={20} strokeWidth={1.5} /></span>Take Photo
             </button>
           </div>
           <input ref={fileRef} hidden type="file" accept={DOCUMENT_ACCEPT} onChange={handleInputChange} aria-label="Choose legal document file" />
-          <input ref={cameraRef} hidden type="file" accept="image/png,image/jpeg" capture="environment" onChange={handleInputChange} aria-label="Capture contract photo" />
+          <input ref={cameraRef} hidden type="file" accept={CAMERA_ACCEPT} capture="environment" onChange={handleInputChange} aria-label="Capture contract photo" />
           <span id="upload-help" className="sr-only">Supported files are PDF, DOCX, TXT, PNG, JPG, and JPEG up to 15MB.</span>
+          <span id="camera-help" className="sr-only">Use your device camera to capture a PNG, JPG, or JPEG image of a document.</span>
         </div>
         {error && <p className="capture-error" role="alert">{error}</p>}
       </div>

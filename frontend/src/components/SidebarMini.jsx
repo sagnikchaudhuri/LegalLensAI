@@ -1,9 +1,11 @@
 import { FilePenLine, FileText, Home, LogOut, MessageCircle, ScrollText } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { useAuth } from "../auth/AuthContext";
 import Brand from "./Brand";
 
 export default function SidebarMini({ documentId, active }) {
+  const { logout } = useAuth();
   const hasDocument = documentId && documentId !== "draft";
   const items = [
     { id: "home", label: "Home", icon: Home, to: "/" },
@@ -24,7 +26,9 @@ export default function SidebarMini({ documentId, active }) {
           </Link>
         ))}
       </nav>
-      <Link to="/" aria-label="Exit"><LogOut size={17} strokeWidth={1.5} /></Link>
+      <button className="sidebar-exit" type="button" onClick={logout} aria-label="Logout" title="Logout">
+        <LogOut size={17} strokeWidth={1.5} />
+      </button>
     </aside>
   );
 }

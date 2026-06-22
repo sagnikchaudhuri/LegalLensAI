@@ -1,3 +1,7 @@
+import asyncio
+import logging
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
@@ -8,12 +12,33 @@ from app.config import settings
 from app.security.audit_logger import audit_log
 from app.security.rate_limiter import RateLimitMiddleware
 from app.services.ai_service import gemini_enabled
+from app.services.embedding_service import warmup_embedding_model
+
+
+logger = logging.getLogger("legallens")
+
+
+async def _warmup_embeddings() -> None:
+    logger.info("Starting embedding model warmup: %s on %s", settings.embedding_model_name, settings.embedding_device)
+    ready, message = await asyncio.to_thread(warmup_embedding_model)
+    if ready:
+        logger.info(message)
+    else:
+        logger.warning("Embedding model warmup did not complete: %s", message)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if settings.embedding_warmup_on_start:
+        asyncio.create_task(_warmup_embeddings())
+    yield
 
 
 app = FastAPI(
     title=settings.app_name,
     description="AI-powered contract intelligence API",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
