@@ -39,13 +39,20 @@ function readableSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function isMobileCaptureDevice() {
+  if (typeof navigator === "undefined") return false;
+  if (navigator.userAgentData?.mobile) return true;
+  return /Android|iPhone|iPad|iPod|SamsungBrowser|Mobile/i.test(navigator.userAgent || "");
+}
+
 export default function UploadPage() {
   const fileRef = useRef(null);
-  const cameraRef = useRef(null);
+  const cameraInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [fileName, setFileName] = useState("");
   const [fileSize, setFileSize] = useState("");
   const [error, setError] = useState("");
+  const [cameraNotice, setCameraNotice] = useState("");
   const navigate = useNavigate();
 
   const handleFile = async (file, source = "file") => {
@@ -55,6 +62,7 @@ export default function UploadPage() {
       return;
     }
     setError("");
+    setCameraNotice("");
     setFileName(file.name);
     setFileSize(readableSize(file.size));
     const validationError = validateFile(file);
@@ -80,19 +88,25 @@ export default function UploadPage() {
       return;
     }
     setError("");
+    setCameraNotice("");
     fileRef.current.value = "";
     fileRef.current.click();
   };
 
   const openCameraPicker = () => {
     if (uploading) return;
-    if (!cameraRef.current) {
+    if (!cameraInputRef.current) {
       setError("Camera capture is not available in this browser session. Please refresh and try again.");
       return;
     }
     setError("");
-    cameraRef.current.value = "";
-    cameraRef.current.click();
+    setCameraNotice(
+      isMobileCaptureDevice()
+        ? "Opening your camera. If your browser shows options, choose Camera."
+        : "Camera capture is available on mobile devices.",
+    );
+    cameraInputRef.current.value = "";
+    cameraInputRef.current.click();
   };
 
   const handleDocumentInputChange = (event) => {
@@ -155,7 +169,7 @@ export default function UploadPage() {
             tabIndex={-1}
           />
           <input
-            ref={cameraRef}
+            ref={cameraInputRef}
             className="file-input-hidden"
             type="file"
             accept={CAMERA_ACCEPT}
@@ -165,8 +179,9 @@ export default function UploadPage() {
             tabIndex={-1}
           />
           <span id="upload-help" className="sr-only">Supported files are PDF, DOCX, TXT, PNG, JPG, and JPEG up to 15MB.</span>
-          <span id="camera-help" className="sr-only">Use your device camera to capture a PNG, JPG, or JPEG image of a document.</span>
+          <span id="camera-help" className="sr-only">Use your mobile device camera to capture a PNG, JPG, or JPEG image of a document. Desktop browsers fall back to image file selection.</span>
         </div>
+        {cameraNotice && !error && <p className="capture-notice" role="status">{cameraNotice}</p>}
         {error && <p className="capture-error" role="alert">{error}</p>}
       </div>
     </JourneyFrame>

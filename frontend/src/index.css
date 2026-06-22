@@ -342,6 +342,10 @@ h1, h2 { font-family: var(--serif); font-weight: 400; }
 .capture-action.primary span { background: linear-gradient(145deg, #efb94e, #c98f24); color: #17120a; border: 0; }
 .capture-action:hover, .capture-action:focus-visible { background: rgba(255,255,255,.025); }
 .capture-action:disabled { opacity: .45; }
+.capture-notice {
+  position: absolute; bottom: 25px; max-width: min(520px, calc(100% - 32px));
+  color: #a9aaa5; font-size: 10px; text-align: center; line-height: 1.5;
+}
 .capture-error { position: absolute; bottom: 25px; max-width: min(520px, calc(100% - 32px)); color: #dc7d6a; font-size: 10px; text-align: center; line-height: 1.5; }
 .file-input-hidden {
   position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden;
