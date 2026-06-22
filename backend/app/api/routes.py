@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -35,6 +36,7 @@ from app.utils.file_utils import load_json, save_json, validate_and_save_upload
 
 
 router = APIRouter(prefix="/api")
+logger = logging.getLogger("legallens")
 
 
 def _client_ip(request: Request) -> str | None:
@@ -185,6 +187,14 @@ def generate_draft(
     payload: DraftRequest,
     user: dict = Depends(require_user_auth),
 ):
+    if settings.api_debug:
+        logger.info(
+            "Draft request received: type=%s party_count=%s special_clause_count=%s purpose_length=%s",
+            payload.document_type,
+            len(payload.party_names),
+            len(payload.special_clauses),
+            len(payload.purpose),
+        )
     response = DraftingAgent().run(payload).draft
     audit_log("draft", "success", "Draft generated.", client_ip=_client_ip(request))
     return response

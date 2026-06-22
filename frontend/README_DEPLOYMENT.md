@@ -23,6 +23,8 @@ If deploying from the repository root instead, the root `vercel.json` is fronten
 
 ```env
 VITE_API_URL=https://your-render-backend.onrender.com
+VITE_API_TIMEOUT_MS=30000
+VITE_API_DEBUG=false
 VITE_FIREBASE_API_KEY=
 VITE_FIREBASE_AUTH_DOMAIN=legallens-ai-fd05e.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=legallens-ai-fd05e
@@ -52,6 +54,8 @@ FRONTEND_URL=https://your-vercel-frontend.vercel.app
 ```
 
 This allows the Vercel frontend to call the FastAPI backend.
+
+If Drafting Studio shows a backend/CORS error, confirm `VITE_API_URL` is the Render backend origin and not `localhost`. Temporarily set `VITE_API_DEBUG=true` in Vercel to log safe request/response summaries in the browser console.
 
 ## Verification
 

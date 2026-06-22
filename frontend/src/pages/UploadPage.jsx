@@ -9,17 +9,17 @@ const MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024;
 const ACCEPTED_EXTENSIONS = new Set(["pdf", "docx", "txt", "png", "jpg", "jpeg"]);
 const CAMERA_ACCEPT = "image/*";
 const DOCUMENT_ACCEPT = [
-  "application/pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  "text/plain",
-  "image/png",
-  "image/jpeg",
   ".pdf",
   ".docx",
   ".txt",
   ".png",
   ".jpg",
   ".jpeg",
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "text/plain",
+  "image/png",
+  "image/jpeg",
 ].join(",");
 
 function validateFile(file) {
@@ -48,8 +48,12 @@ export default function UploadPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleFile = async (file) => {
-    if (!file || uploading) return;
+  const handleFile = async (file, source = "file") => {
+    if (uploading) return;
+    if (!file) {
+      setError(source === "camera" ? "No photo was selected. Please try Take Photo again." : "No file was selected. Please choose a document.");
+      return;
+    }
     setError("");
     setFileName(file.name);
     setFileSize(readableSize(file.size));
@@ -70,20 +74,35 @@ export default function UploadPage() {
   };
 
   const openFilePicker = () => {
-    if (!uploading) {
-      fileRef.current?.click();
+    if (uploading) return;
+    if (!fileRef.current) {
+      setError("File picker is not available in this browser session. Please refresh and try again.");
+      return;
     }
+    setError("");
+    fileRef.current.value = "";
+    fileRef.current.click();
   };
 
   const openCameraPicker = () => {
-    if (!uploading) {
-      cameraRef.current?.click();
+    if (uploading) return;
+    if (!cameraRef.current) {
+      setError("Camera capture is not available in this browser session. Please refresh and try again.");
+      return;
     }
+    setError("");
+    cameraRef.current.value = "";
+    cameraRef.current.click();
   };
 
-  const handleInputChange = (event) => {
-    handleFile(event.target.files?.[0]);
-    event.target.value = "";
+  const handleDocumentInputChange = (event) => {
+    handleFile(event.currentTarget.files?.[0], "file");
+    event.currentTarget.value = "";
+  };
+
+  const handleCameraInputChange = (event) => {
+    handleFile(event.currentTarget.files?.[0], "camera");
+    event.currentTarget.value = "";
   };
 
   return (
@@ -126,8 +145,25 @@ export default function UploadPage() {
               <span><Camera size={20} strokeWidth={1.5} /></span>Take Photo
             </button>
           </div>
-          <input ref={fileRef} hidden type="file" accept={DOCUMENT_ACCEPT} onChange={handleInputChange} aria-label="Choose legal document file" />
-          <input ref={cameraRef} hidden type="file" accept={CAMERA_ACCEPT} capture="environment" onChange={handleInputChange} aria-label="Capture contract photo" />
+          <input
+            ref={fileRef}
+            className="file-input-hidden"
+            type="file"
+            accept={DOCUMENT_ACCEPT}
+            onChange={handleDocumentInputChange}
+            aria-label="Choose legal document file"
+            tabIndex={-1}
+          />
+          <input
+            ref={cameraRef}
+            className="file-input-hidden"
+            type="file"
+            accept={CAMERA_ACCEPT}
+            capture="environment"
+            onChange={handleCameraInputChange}
+            aria-label="Capture contract photo"
+            tabIndex={-1}
+          />
           <span id="upload-help" className="sr-only">Supported files are PDF, DOCX, TXT, PNG, JPG, and JPEG up to 15MB.</span>
           <span id="camera-help" className="sr-only">Use your device camera to capture a PNG, JPG, or JPEG image of a document.</span>
         </div>

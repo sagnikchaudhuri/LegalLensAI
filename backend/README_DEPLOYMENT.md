@@ -26,6 +26,9 @@ If model download during build is too slow for your Render plan, remove the prel
 GEMINI_API_KEY=
 GEMINI_MODEL=gemini-2.0-flash
 FRONTEND_URL=https://your-vercel-frontend.vercel.app
+CORS_ALLOWED_ORIGINS=
+CORS_ALLOW_ORIGIN_REGEX=https://.*\.vercel\.app
+API_DEBUG=false
 MAX_UPLOAD_SIZE_BYTES=15728640
 DOCUMENT_AUTO_EXPIRE_HOURS=24
 REDACT_PII_FOR_LLM=true
@@ -42,6 +45,8 @@ EMBEDDING_WARMUP_ON_START=true
 ```
 
 `FIREBASE_SERVICE_ACCOUNT_JSON` should be the full Firebase Admin service account JSON stored as an environment variable. Do not commit it.
+
+Set `FRONTEND_URL` to the main Vercel production origin. Use `CORS_ALLOWED_ORIGINS` for extra comma-separated custom domains. The default `CORS_ALLOW_ORIGIN_REGEX` allows Vercel preview/production domains; clear it if you want exact-origin-only CORS. Temporarily set `API_DEBUG=true` to log safe draft/request diagnostics on Render.
 
 ## Persistent Disk
 

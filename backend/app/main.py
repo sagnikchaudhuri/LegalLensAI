@@ -18,6 +18,22 @@ from app.services.embedding_service import warmup_embedding_model
 logger = logging.getLogger("legallens")
 
 
+def _split_origins(value: str | None) -> list[str]:
+    if not value:
+        return []
+    return [origin.strip().rstrip("/") for origin in value.split(",") if origin.strip()]
+
+
+def _cors_origins() -> list[str]:
+    origins = [
+        * _split_origins(settings.frontend_url),
+        * _split_origins(settings.cors_allowed_origins),
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+    ]
+    return list(dict.fromkeys(origins))
+
+
 async def _warmup_embeddings() -> None:
     logger.info("Starting embedding model warmup: %s on %s", settings.embedding_model_name, settings.embedding_device)
     ready, message = await asyncio.to_thread(warmup_embedding_model)
@@ -43,7 +59,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_url, "http://127.0.0.1:5173"],
+    allow_origins=_cors_origins(),
+    allow_origin_regex=settings.cors_allow_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -62,6 +79,11 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    logger.warning(
+        "Validation error for %s: %s",
+        request.url.path,
+        [{"loc": error.get("loc"), "type": error.get("type")} for error in exc.errors()],
+    )
     return JSONResponse(
         status_code=422,
         content={"error": {"code": "validation_error", "message": "Invalid request data."}},
@@ -70,6 +92,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
+    logger.exception("Unhandled server error for %s", request.url.path)
     audit_log(
         "security_warning",
         "failed",

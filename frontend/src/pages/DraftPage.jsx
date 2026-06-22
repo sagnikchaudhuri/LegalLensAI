@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import WorkspaceFrame from "../components/WorkspaceFrame";
 import { generateDraft } from "../services/api";
+import { recordDraftGeneration } from "../utils/historyStorage";
 
 const documentTypes = [
   "NDA",
@@ -42,7 +43,9 @@ export default function DraftPage() {
         party_names: form.party_names.split(",").map((item) => item.trim()).filter(Boolean),
         special_clauses: form.special_clauses.split("\n").map((item) => item.trim()).filter(Boolean),
       };
-      setDraft(await generateDraft(payload));
+      const generatedDraft = await generateDraft(payload);
+      setDraft(generatedDraft);
+      recordDraftGeneration(payload.document_type);
     } catch (err) {
       setError(err.message);
     } finally {

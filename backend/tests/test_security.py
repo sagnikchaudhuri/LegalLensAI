@@ -223,3 +223,39 @@ def test_auth_required_accepts_user_and_document_tokens(client, monkeypatch):
     )
 
     assert analysis.status_code == 200, analysis.text
+
+
+def test_draft_endpoint_generates_template(client):
+    response = client.post(
+        "/api/draft",
+        json={
+            "document_type": "NDA",
+            "party_names": ["Alpha Labs", "Beta Consultant"],
+            "purpose": "Confidential product review",
+            "payment": "No fee",
+            "duration": "12 months",
+            "jurisdiction": "India",
+            "special_clauses": ["Return materials on request"],
+        },
+    )
+
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["document_type"] == "NDA"
+    assert "Confidential product review" in payload["full_draft"]
+    assert payload["clause_explanations"]
+    assert payload["risk_notes"]
+
+
+def test_vercel_origin_cors_preflight_is_allowed(client):
+    response = client.options(
+        "/api/draft",
+        headers={
+            "Origin": "https://legallens-ai-demo.vercel.app",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "authorization,content-type",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "https://legallens-ai-demo.vercel.app"
