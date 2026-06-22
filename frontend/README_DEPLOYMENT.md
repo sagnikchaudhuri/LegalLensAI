@@ -22,7 +22,7 @@ If deploying from the repository root instead, the root `vercel.json` is fronten
 ## Environment Variables
 
 ```env
-VITE_API_URL=https://your-render-backend.onrender.com
+VITE_API_URL=https://legallensai-r17j.onrender.com
 VITE_API_TIMEOUT_MS=30000
 VITE_API_DEBUG=false
 VITE_FIREBASE_API_KEY=
@@ -50,12 +50,20 @@ The Render backend URL does not need to be listed as an authorized domain unless
 Set the Render backend environment variable:
 
 ```env
-FRONTEND_URL=https://your-vercel-frontend.vercel.app
+CORS_ALLOWED_ORIGINS=https://legallensai.vercel.app
+FRONTEND_URL=https://legallensai.vercel.app
 ```
 
 This allows the Vercel frontend to call the FastAPI backend.
 
-If Drafting Studio shows a backend/CORS error, confirm `VITE_API_URL` is the Render backend origin and not `localhost`. Temporarily set `VITE_API_DEBUG=true` in Vercel to log safe request/response summaries in the browser console.
+If Drafting Studio shows a backend/CORS error, confirm `VITE_API_URL` is `https://legallensai-r17j.onrender.com` and not `localhost` or the Vercel frontend URL. Temporarily set `VITE_API_DEBUG=true` in Vercel to log safe request/response summaries in the browser console.
+
+Backend health checks:
+
+```bash
+curl https://legallensai-r17j.onrender.com/
+curl https://legallensai-r17j.onrender.com/api/health
+```
 
 ## Verification
 

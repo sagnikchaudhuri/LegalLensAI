@@ -16,7 +16,7 @@ The backend should be deployed separately from the Vercel frontend because it us
   ```bash
   python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
   ```
-- Health Check Path: `/`
+- Health Check Path: `/api/health` or `/`
 
 If model download during build is too slow for your Render plan, remove the preload command and let startup warmup load the model. The first upload may be slower.
 
@@ -25,8 +25,8 @@ If model download during build is too slow for your Render plan, remove the prel
 ```env
 GEMINI_API_KEY=
 GEMINI_MODEL=gemini-2.0-flash
-FRONTEND_URL=https://your-vercel-frontend.vercel.app
-CORS_ALLOWED_ORIGINS=
+FRONTEND_URL=https://legallensai.vercel.app
+CORS_ALLOWED_ORIGINS=https://legallensai.vercel.app
 CORS_ALLOW_ORIGIN_REGEX=https://.*\.vercel\.app
 API_DEBUG=false
 MAX_UPLOAD_SIZE_BYTES=15728640
@@ -46,7 +46,7 @@ EMBEDDING_WARMUP_ON_START=true
 
 `FIREBASE_SERVICE_ACCOUNT_JSON` should be the full Firebase Admin service account JSON stored as an environment variable. Do not commit it.
 
-Set `FRONTEND_URL` to the main Vercel production origin. Use `CORS_ALLOWED_ORIGINS` for extra comma-separated custom domains. The default `CORS_ALLOW_ORIGIN_REGEX` allows Vercel preview/production domains; clear it if you want exact-origin-only CORS. Temporarily set `API_DEBUG=true` to log safe draft/request diagnostics on Render.
+Set `FRONTEND_URL` to the main Vercel production origin. Use `CORS_ALLOWED_ORIGINS` for extra comma-separated custom domains. The default `CORS_ALLOW_ORIGIN_REGEX` allows Vercel preview/production domains; clear it if you want exact-origin-only CORS. CORS explicitly allows `Authorization`, `X-Document-Token`, and `Content-Type`. Temporarily set `API_DEBUG=true` to log safe draft/request diagnostics on Render.
 
 ## Persistent Disk
 
@@ -100,6 +100,7 @@ X-Document-Token: <document access token>
 
 ```bash
 curl https://your-render-backend.onrender.com/
+curl https://your-render-backend.onrender.com/api/health
 ```
 
 Expected response includes:
@@ -107,6 +108,7 @@ Expected response includes:
 ```json
 {
   "status": "healthy",
-  "service": "LegalLens AI"
+  "service": "LegalLens AI",
+  "version": "1.0.0"
 }
 ```

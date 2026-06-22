@@ -247,15 +247,32 @@ def test_draft_endpoint_generates_template(client):
     assert payload["risk_notes"]
 
 
+def test_health_endpoints_return_clear_json(client):
+    root = client.get("/")
+    api_health = client.get("/api/health")
+
+    for response in (root, api_health):
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["status"] == "healthy"
+        assert payload["service"] == "LegalLens AI"
+        assert payload["version"] == "1.0.0"
+        assert payload["mode"] in {"gemini", "local-rules"}
+
+
 def test_vercel_origin_cors_preflight_is_allowed(client):
     response = client.options(
         "/api/draft",
         headers={
             "Origin": "https://legallens-ai-demo.vercel.app",
             "Access-Control-Request-Method": "POST",
-            "Access-Control-Request-Headers": "authorization,content-type",
+            "Access-Control-Request-Headers": "authorization,x-document-token,content-type",
         },
     )
 
     assert response.status_code == 200
     assert response.headers["access-control-allow-origin"] == "https://legallens-ai-demo.vercel.app"
+    allowed_headers = response.headers["access-control-allow-headers"].lower()
+    assert "authorization" in allowed_headers
+    assert "x-document-token" in allowed_headers
+    assert "content-type" in allowed_headers

@@ -63,7 +63,7 @@ app.add_middleware(
     allow_origin_regex=settings.cors_allow_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["Authorization", "Content-Type", "X-Document-Token", "Accept", "Origin"],
 )
 app.add_middleware(RateLimitMiddleware)
 app.include_router(router)
@@ -105,10 +105,20 @@ async def generic_exception_handler(request: Request, exc: Exception):
     )
 
 
-@app.get("/")
-def health_check():
+def _health_payload() -> dict:
     return {
         "status": "healthy",
         "service": settings.app_name,
+        "version": app.version,
         "mode": "gemini" if gemini_enabled() else "local-rules",
     }
+
+
+@app.get("/")
+def health_check():
+    return _health_payload()
+
+
+@app.get("/api/health")
+def api_health_check():
+    return _health_payload()
