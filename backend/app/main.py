@@ -11,11 +11,11 @@ from app.api.routes import router
 from app.config import settings
 from app.security.audit_logger import audit_log
 from app.security.rate_limiter import RateLimitMiddleware
-from app.services.ai_service import gemini_enabled
 from app.services.embedding_service import warmup_embedding_model
 
 
 logger = logging.getLogger("legallens")
+PRODUCTION_FRONTEND_ORIGIN = "https://legal-lensai.vercel.app"
 
 
 def _split_origins(value: str | None) -> list[str]:
@@ -28,6 +28,7 @@ def _cors_origins() -> list[str]:
     origins = [
         * _split_origins(settings.frontend_url),
         * _split_origins(settings.cors_allowed_origins),
+        PRODUCTION_FRONTEND_ORIGIN,
         "http://127.0.0.1:5173",
         "http://localhost:5173",
     ]
@@ -60,7 +61,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins(),
-    allow_origin_regex=settings.cors_allow_origin_regex,
+    allow_origin_regex=settings.cors_allow_origin_regex or None,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["Authorization", "Content-Type", "X-Document-Token", "Accept", "Origin"],
@@ -105,20 +106,11 @@ async def generic_exception_handler(request: Request, exc: Exception):
     )
 
 
-def _health_payload() -> dict:
-    return {
-        "status": "healthy",
-        "service": settings.app_name,
-        "version": app.version,
-        "mode": "gemini" if gemini_enabled() else "local-rules",
-    }
-
-
 @app.get("/")
 def health_check():
-    return _health_payload()
+    return {"status": "ok", "service": "LegalLens AI Backend"}
 
 
 @app.get("/api/health")
 def api_health_check():
-    return _health_payload()
+    return {"status": "ok", "api": "healthy"}

@@ -50,8 +50,8 @@ The Render backend URL does not need to be listed as an authorized domain unless
 Set the Render backend environment variable:
 
 ```env
-CORS_ALLOWED_ORIGINS=https://legallensai.vercel.app
-FRONTEND_URL=https://legallensai.vercel.app
+CORS_ALLOWED_ORIGINS=https://legal-lensai.vercel.app
+FRONTEND_URL=https://legal-lensai.vercel.app
 ```
 
 This allows the Vercel frontend to call the FastAPI backend.

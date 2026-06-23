@@ -251,27 +251,24 @@ def test_health_endpoints_return_clear_json(client):
     root = client.get("/")
     api_health = client.get("/api/health")
 
-    for response in (root, api_health):
-        assert response.status_code == 200
-        payload = response.json()
-        assert payload["status"] == "healthy"
-        assert payload["service"] == "LegalLens AI"
-        assert payload["version"] == "1.0.0"
-        assert payload["mode"] in {"gemini", "local-rules"}
+    assert root.status_code == 200
+    assert root.json() == {"status": "ok", "service": "LegalLens AI Backend"}
+    assert api_health.status_code == 200
+    assert api_health.json() == {"status": "ok", "api": "healthy"}
 
 
 def test_vercel_origin_cors_preflight_is_allowed(client):
     response = client.options(
         "/api/draft",
         headers={
-            "Origin": "https://legallens-ai-demo.vercel.app",
+            "Origin": "https://legal-lensai.vercel.app",
             "Access-Control-Request-Method": "POST",
             "Access-Control-Request-Headers": "authorization,x-document-token,content-type",
         },
     )
 
     assert response.status_code == 200
-    assert response.headers["access-control-allow-origin"] == "https://legallens-ai-demo.vercel.app"
+    assert response.headers["access-control-allow-origin"] == "https://legal-lensai.vercel.app"
     allowed_headers = response.headers["access-control-allow-headers"].lower()
     assert "authorization" in allowed_headers
     assert "x-document-token" in allowed_headers

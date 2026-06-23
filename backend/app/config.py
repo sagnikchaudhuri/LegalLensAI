@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     gemini_model: str = "gemini-2.0-flash"
     frontend_url: str = "http://localhost:5173"
     cors_allowed_origins: str | None = None
-    cors_allow_origin_regex: str | None = r"https://.*\.vercel\.app"
+    cors_allow_origin_regex: str | None = None
     api_debug: bool = False
     uploads_dir: Path = BASE_DIR / "uploads"
     data_dir: Path = BASE_DIR / "data"

@@ -25,9 +25,9 @@ If model download during build is too slow for your Render plan, remove the prel
 ```env
 GEMINI_API_KEY=
 GEMINI_MODEL=gemini-2.0-flash
-FRONTEND_URL=https://legallensai.vercel.app
-CORS_ALLOWED_ORIGINS=https://legallensai.vercel.app
-CORS_ALLOW_ORIGIN_REGEX=https://.*\.vercel\.app
+FRONTEND_URL=https://legal-lensai.vercel.app
+CORS_ALLOWED_ORIGINS=https://legal-lensai.vercel.app
+CORS_ALLOW_ORIGIN_REGEX=
 API_DEBUG=false
 MAX_UPLOAD_SIZE_BYTES=15728640
 DOCUMENT_AUTO_EXPIRE_HOURS=24
@@ -46,7 +46,7 @@ EMBEDDING_WARMUP_ON_START=true
 
 `FIREBASE_SERVICE_ACCOUNT_JSON` should be the full Firebase Admin service account JSON stored as an environment variable. Do not commit it.
 
-Set `FRONTEND_URL` to the main Vercel production origin. Use `CORS_ALLOWED_ORIGINS` for extra comma-separated custom domains. The default `CORS_ALLOW_ORIGIN_REGEX` allows Vercel preview/production domains; clear it if you want exact-origin-only CORS. CORS explicitly allows `Authorization`, `X-Document-Token`, and `Content-Type`. Temporarily set `API_DEBUG=true` to log safe draft/request diagnostics on Render.
+Set `FRONTEND_URL` to the main Vercel production origin. Use `CORS_ALLOWED_ORIGINS` for extra comma-separated custom domains. CORS is exact-origin by default and explicitly allows `Authorization`, `X-Document-Token`, and `Content-Type`. Temporarily set `API_DEBUG=true` to log safe draft/request diagnostics on Render.
 
 ## Persistent Disk
 
@@ -107,8 +107,7 @@ Expected response includes:
 
 ```json
 {
-  "status": "healthy",
-  "service": "LegalLens AI",
-  "version": "1.0.0"
+  "status": "ok",
+  "service": "LegalLens AI Backend"
 }
 ```
